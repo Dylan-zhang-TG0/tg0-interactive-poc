@@ -5,6 +5,8 @@ import TouchDial from './components/TouchDial';
 import PressurePad from './components/PressurePad';
 import ShearSlider from './components/ShearSlider';
 import Marquee from './components/Marquee';
+import InteractiveSliderMockup from './components/InteractiveSliderMockup';
+import TechExplosion from './components/TechExplosion';
 
 const PixelText = ({ text, style, lightMode = false }) => {
   return (
@@ -190,32 +192,13 @@ export default function App() {
         </div>
       </section>
 
-      {/* 6. Exploded Technical View (Light Mode) */}
-      <section className="section-light" style={{ padding: '8rem 2rem', borderTop: '1px solid rgba(0,0,0,0.1)', background: '#F9F9F9' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: '4rem' }}>
-          <div style={{ flex: '1 1 300px' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: '900', lineHeight: '1.3', marginBottom: '2rem' }}>
-              OUR PLATFORM REPLACES COMPLEX SENSOR NETWORKS WITH AN OVER MOULDED MATERIAL STACK TO ACHIEVE TRUE SIMPLICITY, BEAUTY AND ELEGANCE.
-            </h2>
-          </div>
-          <div style={{ flex: '1 1 400px' }}>
-             <ol style={{ paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', color: 'var(--text-dark)' }}>
-                <li style={{ paddingLeft: '1rem' }}>Retain the customer's chosen surface material, while adapting seamlessly to any 3D geometry or level of flexibility.</li>
-                <li style={{ paddingLeft: '1rem' }}>Customized textures are engineered to generate touch signals that are uniquely interpretable by TG0 algorithms.</li>
-                <li style={{ paddingLeft: '1rem' }}>Specially engineered internal structures detect and amplify deformation.</li>
-                <li style={{ paddingLeft: '1rem' }}>Simple and robust electrical connections between the conductive material and the PCB.</li>
-                <li style={{ paddingLeft: '1rem' }}>Compatible with existing casings or protective layers.</li>
-             </ol>
-          </div>
-        </div>
-      </section>
+      {/* 6. What is TG0 Section (Explosion View) */}
+      <TechExplosion />
 
       {/* 7. Interactive Slider Section (Light) */}
       <section className="section-light" style={{ padding: '6rem 2rem', textAlign: 'center' }}>
          <h4 className="pixel-text" style={{ color: 'var(--accent-blue)', marginBottom: '2rem' }}>INTERACTIVE SLIDER</h4>
-         <div style={{ width: '100%', maxWidth: '600px', height: '120px', margin: '0 auto', background: '#EAEAEA', borderRadius: '60px', border: '1px solid #CCC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span className="text-secondary">[ Slider Mockup Placeholder ]</span>
-         </div>
+         <InteractiveSliderMockup />
       </section>
 
       {/* 8. Contact Form Footer (Dark) */}
