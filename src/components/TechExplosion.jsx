@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 export default function TechExplosion() {
   const layerVariants = {
     hidden: { y: 0, opacity: 0.5 },
-    visible: (i) => ({
-      y: i * -60, // each layer shifts up by a factor of 60px
+    visible: (custom) => ({
+      y: custom.endY, // expand dynamically from center
       opacity: 1,
       transition: { 
         duration: 1.2, 
         ease: [0.16, 1, 0.3, 1], // easeOutExpo
-        delay: 0.2 + i * 0.1 
+        delay: 0.2 + (4 - custom.zIndex) * 0.1 
       }
     })
   };
@@ -29,10 +29,10 @@ export default function TechExplosion() {
   };
 
   const layers = [
-    { src: 'Tech_explosion_4 1.png', zIndex: 1, yFactor: 0 },   // Base layer (bottom)
-    { src: 'Tech_explosion_3 1.png', zIndex: 2, yFactor: 1 },   // PCB
-    { src: 'Tech_explosion_2 1.png', zIndex: 3, yFactor: 2 },   // Internal Structure
-    { src: 'Tech_explosion_1 1.png', zIndex: 4, yFactor: 3 },   // Top surface
+    { src: 'Tech_explosion_4 1.png', zIndex: 1, endY: 150 },   // White Base layer (bottom)
+    { src: 'Tech_explosion_3 1.png', zIndex: 2, endY: 50 },    // Green PCB
+    { src: 'Tech_explosion_2 1.png', zIndex: 3, endY: -50 },   // Internal Structure
+    { src: 'Tech_explosion_1 1.png', zIndex: 4, endY: -150 },  // Top surface
   ];
 
   const callouts = [
@@ -102,7 +102,7 @@ export default function TechExplosion() {
             {layers.reverse().map((layer, index) => (
               <motion.img 
                 key={index}
-                custom={layer.yFactor}
+                custom={layer}
                 variants={layerVariants}
                 src={`${import.meta.env.BASE_URL}assets/${layer.src}`} 
                 alt={`Stack Layer ${index}`}
