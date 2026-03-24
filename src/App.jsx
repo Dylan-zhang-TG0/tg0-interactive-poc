@@ -50,7 +50,7 @@ export default function App() {
         display: 'flex',
         justifyContent: 'flex-start'
       }}>
-        <img src="/assets/TG0_logo_white_large-01-01 2.svg" alt="TG0 Logo" style={{ height: '30px', opacity: 0.9 }} />
+        <img src={`${import.meta.env.BASE_URL}assets/TG0_logo_white_large-01-01 2.svg`} alt="TG0 Logo" style={{ height: '30px', opacity: 0.9 }} />
       </nav>
 
       {/* 1. Hero Section (Dark) */}
@@ -67,7 +67,7 @@ export default function App() {
         <motion.div style={{
           position: 'absolute',
           top: 0, left: 0, width: '100%', height: '120%',
-          backgroundImage: 'url("/assets/Screenshot 2022-04-29 16.21.39 1.png")',
+          backgroundImage: `url("${import.meta.env.BASE_URL}assets/Screenshot 2022-04-29 16.21.39 1.png")`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'brightness(0.8) contrast(1.1)',
