@@ -1,74 +1,72 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function TechExplosion() {
-  const layerVariants = {
-    hidden: { y: 0, opacity: 0.5 },
-    visible: (custom) => ({
-      y: custom.endY, // expand dynamically from center
-      opacity: 1,
-      transition: { 
-        duration: 1.2, 
-        ease: [0.16, 1, 0.3, 1], // easeOutExpo
-        delay: 0.2 + (4 - custom.zIndex) * 0.1 
-      }
-    })
-  };
+  const containerRef = useRef(null);
+  
+  // Track scroll correctly within the 300vh container
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { staggerChildren: 0.2, delayChildren: 0.4 }
-    }
-  };
-
-  const textVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } }
-  };
-
+  // Layer Animations: As scroll goes 0 -> 0.6, the object fully explodes
+  const layer1Y = useTransform(scrollYProgress, [0, 0.6], [0, -150]); // Top (Black Surface)
+  const layer2Y = useTransform(scrollYProgress, [0, 0.6], [0, -50]);  // Internal Structure
+  const layer3Y = useTransform(scrollYProgress, [0, 0.6], [0, 50]);   // Green PCB
+  const layer4Y = useTransform(scrollYProgress, [0, 0.6], [0, 150]);  // Base
+  
   const layers = [
-    { src: 'Tech_explosion_4 1.png', zIndex: 1, endY: 150 },   // White Base layer (bottom)
-    { src: 'Tech_explosion_3 1.png', zIndex: 2, endY: 50 },    // Green PCB
-    { src: 'Tech_explosion_2 1.png', zIndex: 3, endY: -50 },   // Internal Structure
-    { src: 'Tech_explosion_1 1.png', zIndex: 4, endY: -150 },  // Top surface
+    { src: 'Tech_explosion_4 1.png', zIndex: 1, y: layer4Y },
+    { src: 'Tech_explosion_3 1.png', zIndex: 2, y: layer3Y },
+    { src: 'Tech_explosion_2 1.png', zIndex: 3, y: layer2Y },
+    { src: 'Tech_explosion_1 1.png', zIndex: 4, y: layer1Y },
   ];
 
+  // Specific Text Callout fade-in mapped to the scroll progress
+  // They fade in sequentially as the device opens up
   const callouts = [
     {
-      title: "surface material",
-      text: "Retain the customer's chosen <b>surface material</b>, while adapting seamlessly to any 3D geometry or level of flexibility."
+      text: "Retain the customer's chosen <b>surface material</b>, while adapting seamlessly to any 3D geometry or level of flexibility.",
+      opacity: useTransform(scrollYProgress, [0.1, 0.3], [0, 1]),
+      x: useTransform(scrollYProgress, [0.1, 0.3], [20, 0])
     },
     {
-      title: "textures",
-      text: "<b>Customized textures</b> are engineered to generate touch signals that are uniquely interpretable by TG0 algorithms."
+      text: "<b>Customized textures</b> are engineered to generate touch signals that are uniquely interpretable by TG0 algorithms.",
+      opacity: useTransform(scrollYProgress, [0.2, 0.4], [0, 1]),
+      x: useTransform(scrollYProgress, [0.2, 0.4], [20, 0])
     },
     {
-      title: "internal structures",
-      text: "Specially engineered <b>internal structures</b> detect and amplify deformation."
+      text: "Specially engineered <b>internal structures</b> detect and amplify deformation.",
+      opacity: useTransform(scrollYProgress, [0.3, 0.5], [0, 1]),
+      x: useTransform(scrollYProgress, [0.3, 0.5], [20, 0])
     },
     {
-      title: "electrical connections",
-      text: "Simple and robust <b>electrical connections</b> between the conductive material and the PCB."
+      text: "Simple and robust <b>electrical connections</b> between the conductive material and the PCB.",
+      opacity: useTransform(scrollYProgress, [0.4, 0.6], [0, 1]),
+      x: useTransform(scrollYProgress, [0.4, 0.6], [20, 0])
     },
     {
-      title: "layers",
-      text: "Compatible with existing casings or protective <b>layers</b>."
+      text: "Compatible with existing casings or protective <b>layers</b>.",
+      opacity: useTransform(scrollYProgress, [0.5, 0.7], [0, 1]),
+      x: useTransform(scrollYProgress, [0.5, 0.7], [20, 0])
     }
   ];
 
+  // Title animation: Fades in slightly before the explosion starts
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0.5, 1]);
+  const titleY = useTransform(scrollYProgress, [0, 0.2], [20, 0]);
+
   return (
-    <section style={{ padding: '8rem 2rem', background: '#EFEFEF', color: '#333', overflow: 'hidden' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    // The outer container sets the scroll duration. 250vh = 1.5 extra screens of scrolling.
+    <section ref={containerRef} style={{ height: '250vh', background: '#F0F0F0', color: '#333' }}>
+      
+      {/* The sticky container pins strictly to the viewport while we scroll down through the 250vh */}
+      <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: '2rem' }}>
         
-        {/* Title Section aligned to the screenshots */}
+        {/* Title */}
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          style={{ textAlign: 'center', marginBottom: '6rem' }}
+          style={{ opacity: titleOpacity, y: titleY, textAlign: 'center', marginBottom: '4rem', zIndex: 10 }}
         >
           <h3 style={{ 
             fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', 
@@ -89,49 +87,40 @@ export default function TechExplosion() {
           gridTemplateColumns: '1fr 1fr', 
           gap: '4rem', 
           alignItems: 'center',
-          position: 'relative'
+          position: 'relative',
+          width: '100%',
+          maxWidth: '1200px'
         }}>
           
-          {/* Left: 3D Explosion Graphic */}
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, margin: "-200px" }} // Explodes every time we scroll into it
+          {/* Left: 3D Explosion Graphic pinned to scroll */}
+          <div 
             style={{ position: 'relative', height: '500px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
             {layers.reverse().map((layer, index) => (
               <motion.img 
                 key={index}
-                custom={layer}
-                variants={layerVariants}
                 src={`${import.meta.env.BASE_URL}assets/${layer.src}`} 
                 alt={`Stack Layer ${index}`}
                 style={{ 
                   position: 'absolute', 
                   width: '100%', 
-                  maxWidth: '450px',
+                  maxWidth: '500px',
                   objectFit: 'contain',
                   zIndex: layer.zIndex,
-                  // Tweak transform origin just in case the images are tightly cropped
-                  transformOrigin: 'center'
+                  y: layer.y // Framer Motion uses exactly what useTransform computes dynamically based on scroll
                 }} 
               />
             ))}
-          </motion.div>
+          </div>
 
-          {/* Right: Callouts */}
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, margin: "-200px" }}
-            style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
-          >
+          {/* Right: Sequential Text Callouts */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {callouts.map((item, idx) => (
               <motion.div 
                 key={idx} 
-                variants={textVariants}
                 style={{ 
+                  opacity: item.opacity,
+                  x: item.x,
                   background: '#FFFFFF', 
                   padding: '1.2rem 1.5rem', 
                   boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
@@ -142,21 +131,8 @@ export default function TechExplosion() {
                 }}
               >
                 {/* Visual marker pointing to the left */}
-                <div style={{
-                  position: 'absolute',
-                  left: '-24px',
-                  width: '20px',
-                  height: '2px',
-                  background: 'rgba(0,0,0,0.1)'
-                }} />
-                <div style={{
-                  position: 'absolute',
-                  left: '-28px',
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  background: '#ccc'
-                }} />
+                <div style={{ position: 'absolute', left: '-24px', width: '20px', height: '2px', background: 'rgba(0,0,0,0.1)' }} />
+                <div style={{ position: 'absolute', left: '-28px', width: '6px', height: '6px', borderRadius: '50%', background: '#ccc' }} />
 
                 <p 
                   style={{ margin: 0, fontSize: '0.95rem', lineHeight: '1.6', color: '#555' }}
@@ -164,7 +140,7 @@ export default function TechExplosion() {
                 />
               </motion.div>
             ))}
-          </motion.div>
+          </div>
 
         </div>
       </div>

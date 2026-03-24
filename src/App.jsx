@@ -141,15 +141,15 @@ export default function App() {
       </section>
 
       {/* 5. Interaction Modes Grid (Light Mode) */}
-      <section className="section-light" style={{ 
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: '4rem',
-        padding: '8rem 2rem',
-        maxWidth: '1440px',
-        margin: '0 auto',
-        width: '100%'
-      }}>
+      <section className="section-light" style={{ padding: '8rem 2rem', width: '100%' }}>
+        <div style={{ 
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '4rem',
+          maxWidth: '1440px',
+          margin: '0 auto',
+          width: '100%'
+        }}>
         
         {/* Feature 1 */}
         <div className="glass-panel" style={{ padding: '4rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem' }}>
@@ -189,6 +189,7 @@ export default function App() {
           <div style={{ filter: 'invert(1) hue-rotate(180deg)' }}>
             <ShearSlider />
           </div>
+        </div>
         </div>
       </section>
 
