@@ -7,6 +7,7 @@ import ShearSlider from './components/ShearSlider';
 import Marquee from './components/Marquee';
 import InteractiveSliderMockup from './components/InteractiveSliderMockup';
 import TechExplosion from './components/TechExplosion';
+import MaterialDial from './components/MaterialDial';
 
 const PixelText = ({ text, style, lightMode = false }) => {
   return (
@@ -202,7 +203,10 @@ export default function App() {
          <InteractiveSliderMockup />
       </section>
 
-      {/* 8. Contact Form Footer (Dark) */}
+      {/* 8. Material Selection Dial */}
+      <MaterialDial />
+
+      {/* 9. Contact Form Footer (Dark) */}
       <section className="section-dark" style={{ padding: '10rem 2rem 6rem', textAlign: 'center' }}>
          <h2 className="heading-xl" style={{ fontSize: '3vw', marginBottom: '4rem' }}>READY TO STREAMLINE YOUR HARDWARE?</h2>
          <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '500px', margin: '0 auto' }}>
