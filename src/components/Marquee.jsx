@@ -10,11 +10,12 @@ export default function Marquee({ speed = 20 }) {
   const content = [...logos, ...logos, ...logos].map((logo, index) => (
     <div key={index} style={{ 
       fontSize: '1.2rem', 
-      fontWeight: 'bold', 
-      color: 'var(--text-dark)', 
+      fontWeight: '600', 
+      color: 'var(--accent-blue)', 
+      fontFamily: 'var(--font-pixel)',
+      letterSpacing: '0.15em',
       padding: '0 3rem',
-      whiteSpace: 'nowrap',
-      opacity: 0.8
+      whiteSpace: 'nowrap'
     }}>
       {logo.toUpperCase()}
     </div>
@@ -26,10 +27,10 @@ export default function Marquee({ speed = 20 }) {
       width: '100%',
       display: 'flex',
       alignItems: 'center',
-      background: '#E4E4E4',
+      background: '#ffffff',
       padding: '2rem 0',
-      borderTop: '1px solid rgba(0,0,0,0.1)',
-      borderBottom: '1px solid rgba(0,0,0,0.1)',
+      borderTop: '1px solid var(--accent-blue)',
+      borderBottom: '1px solid var(--accent-blue)'
     }}>
       <motion.div
         animate={{ x: [0, -1000] }}

@@ -25,10 +25,9 @@ export default function InteractiveSliderMockup() {
         style={{
           width: '100%',
           height: '140px',
-          background: '#dcdcdc', // sleek grey track
-          borderRadius: '70px',
-          border: '2px solid rgba(0,0,0,0.05)',
-          boxShadow: 'inset 0 10px 20px rgba(0,0,0,0.05), inset 0 -5px 10px rgba(255,255,255,0.5)',
+          background: '#fff', 
+          border: '1px solid var(--accent-blue)',
+          boxShadow: '0 10px 30px rgba(27,78,220,0.1)',
           position: 'relative',
           display: 'flex',
           alignItems: 'center',
@@ -36,19 +35,24 @@ export default function InteractiveSliderMockup() {
           padding: '0 40px'
         }}
       >
+        {/* Track center line */}
+        <div style={{ position: 'absolute', top: '50%', left: '40px', width: 'calc(100% - 80px)', height: '1px', background: 'var(--accent-blue)', borderTop: '1px dashed var(--accent-blue)' }} />
+
         <div style={{ 
           position: 'absolute', 
           width: '100%', 
           textAlign: 'center', 
           left: 0,
           pointerEvents: 'none',
-          color: 'rgba(0,0,0,0.3)',
-          fontWeight: 'bold',
+          color: 'var(--accent-blue)',
+          fontWeight: '500',
           letterSpacing: '0.2em',
-          fontSize: '1.2rem',
-          userSelect: 'none'
+          fontSize: '0.85rem',
+          fontFamily: 'var(--font-pixel)',
+          userSelect: 'none',
+          top: '-30px'
         }}>
-          SLIDE RIDGE
+          [ 04 — INTERACTIVE MOCKUP ]
         </div>
 
         {/* The isolated Ridge (Thumb) */}

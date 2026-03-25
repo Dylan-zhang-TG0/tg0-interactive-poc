@@ -1,5 +1,6 @@
-import React from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import Lenis from 'lenis';
 
 import TouchDial from './components/TouchDial';
 import PressurePad from './components/PressurePad';
@@ -7,98 +8,149 @@ import ShearSlider from './components/ShearSlider';
 import Marquee from './components/Marquee';
 import InteractiveSliderMockup from './components/InteractiveSliderMockup';
 import TechExplosion from './components/TechExplosion';
+import HeroWaveBackground from './components/HeroWaveBackground';
+import Preloader from './components/Preloader';
 
-const PixelText = ({ text, style, lightMode = false }) => {
+const FluidHeadline = ({ text, style, startAnim }) => {
   return (
-    <h2 className="pixel-text" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.5rem', ...style }}>
-      {text.split(' ').map((word, wIdx) => (
-        <span key={wIdx} style={{ display: 'flex' }}>
-          {word.split('').map((char, cIdx) => (
-            <motion.span
-              key={cIdx}
-              whileHover={{
-                color: 'var(--accent-purple)',
-                textShadow: lightMode ? 'none' : '0 0 10px var(--accent-purple), 0 0 20px var(--accent-purple)',
-                scale: 1.1,
-                transition: { duration: 0.1 }
-              }}
-              style={{ cursor: 'pointer', display: 'inline-block' }}
-            >
-              {char}
-            </motion.span>
-          ))}
-          {wIdx !== text.split(' ').length - 1 && <span>&nbsp;</span>}
-        </span>
-      ))}
-    </h2>
+    <motion.h1 
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: startAnim ? 1 : 0, y: startAnim ? 0 : 50 }}
+      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+      style={{ 
+        fontSize: 'clamp(3rem, 9vw, 8rem)', 
+        fontWeight: '500', 
+        lineHeight: '0.85', 
+        letterSpacing: '-0.02em',
+        textTransform: 'uppercase',
+        margin: 0,
+        ...style 
+      }}
+    >
+      {text}
+    </motion.h1>
   );
 };
 
 export default function App() {
   const { scrollYProgress } = useScroll();
+  const [loading, setLoading] = useState(true);
+
+  // Initialize Lenis smooth scroll
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true,
+    });
+
+    let rafId;
+    function raf(time) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+    rafId = requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
+  
+  useEffect(() => {
+    if (loading) {
+      document.body.style.overflow = 'hidden';
+      window.scrollTo(0, 0); // start at top
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [loading]);
   
   // Parallax effect for the hero hand background
   const yBg = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
 
   return (
     <div className="dashboard-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <AnimatePresence>
+        {loading && <Preloader onComplete={() => setLoading(false)} />}
+      </AnimatePresence>
       
       {/* Navbar with Logo */}
       <nav style={{
         position: 'absolute',
         top: 0, left: 0, width: '100%',
-        padding: '2rem 3rem',
+        padding: '2rem 4vw',
         zIndex: 10,
         display: 'flex',
         justifyContent: 'flex-start'
       }}>
-        <img src={`${import.meta.env.BASE_URL}assets/TG0_logo_white_large-01-01 2.svg`} alt="TG0 Logo" style={{ height: '30px', opacity: 0.9 }} />
+        {/* We invert the white logo to make it black/blue for the light background */}
+        <img src={`${import.meta.env.BASE_URL}assets/TG0_logo_white_large-01-01 2.svg`} alt="TG0 Logo" style={{ height: '30px', filter: 'invert(1)' }} />
       </nav>
 
-      {/* 1. Hero Section (Dark) */}
-      <section className="section-dark" style={{ 
-        minHeight: '80vh', 
+      {/* 1. Hero Section (Blueprint Style) */}
+      <section style={{ 
+        minHeight: '100vh', 
         display: 'flex', 
         flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        padding: '6rem 2rem',
+        alignItems: 'flex-start', 
+        justifyContent: 'flex-end', 
+        padding: '2rem 4vw',
         position: 'relative',
         overflow: 'hidden'
       }}>
+        {/* Subtle Background Image with Blueprint filter */}
         <motion.div style={{
           position: 'absolute',
-          top: 0, left: 0, width: '100%', height: '120%',
+          top: '10%', right: '0%', width: '60%', height: '80%',
           backgroundImage: `url("${import.meta.env.BASE_URL}assets/Screenshot 2022-04-29 16.21.39 1.png")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          filter: 'brightness(0.8) contrast(1.1)',
-          opacity: 0.9,
-          y: yBg
-        }} />
-        {/* Soft dark vignette overlay just for text readability, drastically weakened */}
-        <div style={{
-          position: 'absolute',
-          top: 0, left: 0, width: '100%', height: '100%',
-          background: 'radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 100%)',
-          pointerEvents: 'none'
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right center',
+          filter: 'grayscale(100%) contrast(1.2) opacity(0.3)',
+          mixBlendMode: 'multiply',
+          y: yBg,
+          zIndex: 0
         }} />
 
-        <div style={{ maxWidth: '1000px', textAlign: 'center', zIndex: 1, marginTop: '4rem' }}>
-          <PixelText text="WE DEFINE NEW" style={{ marginBottom: '1rem' }} />
-          <PixelText text="CATEGORIES OF" style={{ marginBottom: '1rem' }} />
-          <PixelText text="SENSING" style={{ marginBottom: '3rem' }} />
-          <h3 style={{ fontWeight: '400', letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>
-            BUILT FROM EVERYDAY MATERIALS AND AI
-          </h3>
-          {/* Down Arrow */}
-           <motion.div 
-             animate={{ y: [0, 10, 0] }} 
-             transition={{ repeat: Infinity, duration: 2 }}
-             style={{ marginTop: '5rem', opacity: 0.5 }}
-           >
-             ↓
-           </motion.div>
+        {/* 3D Interactive Particle Wave */}
+        <HeroWaveBackground />
+
+        <div style={{ zIndex: 1, position: 'relative', width: '100%', borderTop: '1px solid var(--accent-blue)', paddingTop: '2rem', marginBottom: '2vh' }}>
+          {/* Blueprint Annotation */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: loading ? 0 : 1 }}
+            transition={{ delay: 0.5, duration: 1 }}
+            style={{ 
+              position: 'absolute', top: 0, right: 0, 
+              background: 'var(--accent-blue)', color: '#fff', 
+              fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', 
+              padding: '0.3rem 0.6rem', letterSpacing: '0.1em' 
+            }}
+          >
+            [ 01 — INTRO ]
+          </motion.div>
+          
+          <FluidHeadline text="WE DEFINE NEW" startAnim={!loading} />
+          <FluidHeadline text="CATEGORIES OF" startAnim={!loading} />
+          <FluidHeadline text="SENSING." style={{ color: 'var(--accent-blue)' }} startAnim={!loading} />
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '3rem' }}>
+            <h3 style={{ fontFamily: 'var(--font-pixel)', fontWeight: '500', letterSpacing: '0.05em', color: '#111', maxWidth: '400px', fontSize: '0.85rem', lineHeight: '1.6', textTransform: 'uppercase' }}>
+              BUILT FROM EVERYDAY MATERIALS AND AI. <br/>
+              REPLACING COMPLEX SENSOR NETWORKS WITH OVER-MOULDED MATERIAL STACKS.
+            </h3>
+            
+            {/* Scroll Indicator */}
+            <motion.div 
+              animate={{ y: [0, 10, 0] }} 
+              transition={{ repeat: Infinity, duration: 2 }}
+              style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.8rem', color: 'var(--accent-blue)', letterSpacing: '0.1em' }}
+            >
+              SCROLL //
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -107,41 +159,70 @@ export default function App() {
         <Marquee speed={30} />
       </section>
 
-      {/* 3. Performance Stats Area (Light) */}
-      <section className="section-light" style={{ padding: '8rem 2rem', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: '4rem', justifyContent: 'space-around' }}>
-           <div style={{ flex: '1 1 400px', textAlign: 'center' }}>
-             <h2 className="heading-xl" style={{ fontSize: '4rem', marginBottom: '1rem', color: '#000' }}>33%</h2>
-             <h4 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem', letterSpacing: '0.1em' }}>CARBON REDUCTION</h4>
-             <p className="text-secondary" style={{ lineHeight: '1.6' }}>Proven 33% reduction in carbon footprint compared to traditional sensor assemblies.</p>
-           </div>
-           <div style={{ flex: '1 1 400px', textAlign: 'center' }}>
-             <h2 className="heading-xl" style={{ fontSize: '4rem', marginBottom: '1rem', color: '#000' }}>80%</h2>
-             <h4 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem', letterSpacing: '0.1em' }}>COMPONENT REDUCTION</h4>
-             <p className="text-secondary" style={{ lineHeight: '1.6' }}>80% fewer components in standard assemblies (e.g., eliminating 6+ mechanical switches).</p>
-           </div>
+      {/* 2. Performance Stats Area (Blueprint) */}
+      <section style={{ padding: '8rem 2vw', borderBottom: '1px solid var(--accent-blue)', position: 'relative' }}>
+         <div style={{ position: 'absolute', top: 0, left: '4vw', width: '1px', height: '100%', background: 'var(--accent-blue)', opacity: 0.2 }} />
+         <div style={{ position: 'absolute', top: 0, right: '4vw', width: '1px', height: '100%', background: 'var(--accent-blue)', opacity: 0.2 }} />
+
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: '4rem', justifyContent: 'space-around' }}>
+           <motion.div 
+             initial={{ opacity: 0, y: 50, rotate: 0 }}
+             whileInView={{ opacity: 1, y: 0, rotate: -1.5 }}
+             viewport={{ once: true, margin: '-100px' }}
+             transition={{ duration: 0.8, ease: "easeOut" }}
+             style={{ flex: '1 1 400px', textAlign: 'center', padding: '5rem 3rem', border: '1px solid var(--accent-blue)', background: '#fff', boxShadow: '12px 12px 0 rgba(27,78,220,0.1)' }}
+           >
+             <h2 className="heading-xl" style={{ fontSize: 'clamp(4rem, 8vw, 7rem)', marginBottom: '1rem', color: 'var(--accent-blue)', fontWeight: 500, letterSpacing: '-0.04em' }}>33%</h2>
+             <h4 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.9rem', fontWeight: '500', marginBottom: '2rem', letterSpacing: '0.15em' }}>( CARBON REDUCTION )</h4>
+             <p className="text-secondary" style={{ lineHeight: '1.6', fontSize: '1.1rem', color: '#444' }}>Proven 33% reduction in carbon footprint compared to traditional sensor assemblies.</p>
+           </motion.div>
+           
+           <motion.div 
+             initial={{ opacity: 0, y: 50, rotate: 0 }}
+             whileInView={{ opacity: 1, y: 0, rotate: 1.5 }}
+             viewport={{ once: true, margin: '-100px' }}
+             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+             style={{ flex: '1 1 400px', textAlign: 'center', padding: '5rem 3rem', border: '1px solid var(--accent-blue)', background: '#fff', boxShadow: '-12px 12px 0 rgba(27,78,220,0.1)' }}
+           >
+             <h2 className="heading-xl" style={{ fontSize: 'clamp(4rem, 8vw, 7rem)', marginBottom: '1rem', color: 'var(--accent-blue)', fontWeight: 500, letterSpacing: '-0.04em' }}>80%</h2>
+             <h4 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.9rem', fontWeight: '500', marginBottom: '2rem', letterSpacing: '0.15em' }}>( COMPONENT REDUCTION )</h4>
+             <p className="text-secondary" style={{ lineHeight: '1.6', fontSize: '1.1rem', color: '#444' }}>80% fewer components in standard assemblies (e.g., eliminating 6+ mechanical switches).</p>
+           </motion.div>
         </div>
       </section>
 
-      {/* 4. Core Technology Dial (Dark Mode) */}
-      <section className="section-dark" style={{ 
-        padding: '8rem 2rem', 
+      {/* 3. Core Technology Dial (Blueprint) */}
+      <section style={{ 
+        padding: '8rem 2vw', 
         display: 'flex', 
         flexDirection: 'column',
         alignItems: 'center',
-        borderBottom: '1px solid rgba(255,255,255,0.05)',
-        background: 'linear-gradient(180deg, var(--bg-dark) 0%, #161616 100%)'
+        borderBottom: '1px solid var(--accent-blue)',
+        position: 'relative'
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-           <h4 className="pixel-text" style={{ fontSize: '1rem', color: 'var(--accent-blue)', marginBottom: '1rem' }}>
-             CORE TECHNOLOGY INTERACTIONS + UI + DATA VISUALISATION
+        <div style={{ position: 'absolute', top: 0, right: 0, background: 'var(--accent-blue)', color: '#fff', fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', padding: '0.3rem 0.6rem', letterSpacing: '0.1em' }}>
+            [ 02 — INTERACTIONS ]
+        </div>
+
+        <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
+           <h4 style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.9rem', color: 'var(--accent-blue)', marginBottom: '1rem', letterSpacing: '0.2em' }}>
+             // CORE TECHNOLOGY INTERACTIONS + UI + DATA VISUALISATION
            </h4>
         </div>
-        <TouchDial size="large" />
+        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <TouchDial size="large" />
+        </div>
       </section>
 
-      {/* 5. Interaction Modes Grid (Light Mode) */}
-      <section className="section-light" style={{ padding: '8rem 2rem', width: '100%' }}>
+      {/* 4. Interaction Modes Grid (Blueprint Mode) */}
+      <section style={{ padding: '8rem 2vw', width: '100%', position: 'relative' }}>
+        <div style={{ position: 'absolute', top: 0, left: '4vw', width: '1px', height: '100%', background: 'var(--accent-blue)', opacity: 0.2 }} />
+        <div style={{ position: 'absolute', top: 0, right: '4vw', width: '1px', height: '100%', background: 'var(--accent-blue)', opacity: 0.2 }} />
+
+        <div style={{ position: 'absolute', top: 0, right: 0, background: 'var(--accent-blue)', color: '#fff', fontFamily: 'var(--font-pixel)', fontSize: '0.75rem', padding: '0.3rem 0.6rem', letterSpacing: '0.1em' }}>
+            [ 03 — CAPABILITIES ]
+        </div>
+
         <div style={{ 
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
@@ -152,65 +233,80 @@ export default function App() {
         }}>
         
         {/* Feature 1 */}
-        <div className="glass-panel" style={{ padding: '4rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem' }}>
+        <motion.div 
+          whileHover={{ y: -10 }}
+          style={{ background: '#fff', border: '1px solid var(--accent-blue)', padding: '4rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem', boxShadow: '12px 12px 0 rgba(27,78,220,0.1)' }}
+        >
           <div style={{ textAlign: 'center' }}>
-            <h3 className="pixel-text" style={{ fontSize: '1.8rem', marginBottom: '1rem', color: '#000' }}>TOUCH</h3>
-            <h3 className="pixel-text" style={{ fontSize: '1.8rem', color: '#000' }}>SENSING</h3>
+            <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.2rem', color: 'var(--accent-blue)', letterSpacing: '0.15em', fontWeight: 600 }}>[ TOUCH SENSING ]</h3>
           </div>
-          <p className="text-secondary" style={{ textAlign: 'center', fontSize: '1rem', lineHeight: '1.6', minHeight: '100px' }}>
+          <p className="text-secondary" style={{ textAlign: 'center', fontSize: '1.05rem', lineHeight: '1.6', minHeight: '80px', color: '#444' }}>
             Detect precise contact location and gestures across complex 3D surfaces, enabling intuitive control without mechanical buttons.
           </p>
           <TouchDial size="small" />
-        </div>
+        </motion.div>
 
         {/* Feature 2 */}
-        <div className="glass-panel" style={{ padding: '4rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem' }}>
+        <motion.div 
+          whileHover={{ y: -10 }}
+          style={{ background: '#fff', border: '1px solid var(--accent-blue)', padding: '4rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem', boxShadow: '12px 12px 0 rgba(27,78,220,0.1)' }}
+        >
           <div style={{ textAlign: 'center' }}>
-            <h3 className="pixel-text" style={{ fontSize: '1.8rem', marginBottom: '1rem', color: '#000' }}>PRESSURE</h3>
-            <h3 className="pixel-text" style={{ fontSize: '1.8rem', color: '#000' }}>MAPPING</h3>
+            <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.2rem', color: 'var(--accent-blue)', letterSpacing: '0.15em', fontWeight: 600 }}>[ PRESSURE MAPPING ]</h3>
           </div>
-          <p className="text-secondary" style={{ textAlign: 'center', fontSize: '1rem', lineHeight: '1.6', minHeight: '100px' }}>
+          <p className="text-secondary" style={{ textAlign: 'center', fontSize: '1.05rem', lineHeight: '1.6', minHeight: '80px', color: '#444' }}>
             Measure distributed force across a surface in real time, delivering actionable data for monitoring and performance.
           </p>
-          <div style={{ filter: 'invert(1) hue-rotate(180deg)', opacity: 0.9 }}>
+          <div style={{ filter: 'invert(1) hue-rotate(180deg)' }}>
              <PressurePad />
           </div>
-        </div>
+        </motion.div>
 
         {/* Feature 3 */}
-        <div className="glass-panel" style={{ padding: '4rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem' }}>
+        <motion.div 
+          whileHover={{ y: -10 }}
+          style={{ background: '#fff', border: '1px solid var(--accent-blue)', padding: '4rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem', boxShadow: '12px 12px 0 rgba(27,78,220,0.1)' }}
+        >
           <div style={{ textAlign: 'center' }}>
-            <h3 className="pixel-text" style={{ fontSize: '1.8rem', marginBottom: '1rem', color: '#000' }}>SHEAR-</h3>
-            <h3 className="pixel-text" style={{ fontSize: '1.8rem', color: '#000' }}>FORCE</h3>
+            <h3 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1.2rem', color: 'var(--accent-blue)', letterSpacing: '0.15em', fontWeight: 600 }}>[ SHEAR-FORCE ]</h3>
           </div>
-          <p className="text-secondary" style={{ textAlign: 'center', fontSize: '1rem', lineHeight: '1.6', minHeight: '100px' }}>
+          <p className="text-secondary" style={{ textAlign: 'center', fontSize: '1.05rem', lineHeight: '1.6', minHeight: '80px', color: '#444' }}>
             Capture lateral movement and directional force, enabling the world's thinnest sensors for dynamic environments.
           </p>
           <div style={{ filter: 'invert(1) hue-rotate(180deg)' }}>
             <ShearSlider />
           </div>
-        </div>
+        </motion.div>
         </div>
       </section>
 
       {/* 6. What is TG0 Section (Explosion View) */}
       <TechExplosion />
 
-      {/* 7. Interactive Slider Section (Light) */}
-      <section className="section-light" style={{ padding: '6rem 2rem', textAlign: 'center' }}>
-         <h4 className="pixel-text" style={{ color: 'var(--accent-blue)', marginBottom: '2rem' }}>INTERACTIVE SLIDER</h4>
+      {/* 7. Interactive Slider Section (Blueprint) */}
+      <section style={{ padding: '8rem 2vw', textAlign: 'center', borderTop: '1px solid var(--accent-blue)', position: 'relative' }}>
+         <h4 style={{ fontFamily: 'var(--font-pixel)', fontSize: '1rem', color: 'var(--accent-blue)', marginBottom: '3rem', letterSpacing: '0.2em' }}>
+           // 04 — INTERACTIVE MOCKUP
+         </h4>
          <InteractiveSliderMockup />
       </section>
 
-      {/* 8. Contact Form Footer (Dark) */}
-      <section className="section-dark" style={{ padding: '10rem 2rem 6rem', textAlign: 'center' }}>
-         <h2 className="heading-xl" style={{ fontSize: '3vw', marginBottom: '4rem' }}>READY TO STREAMLINE YOUR HARDWARE?</h2>
-         <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '500px', margin: '0 auto' }}>
-            <input type="text" placeholder="Name" style={{ padding: '1.5rem', borderRadius: '30px', border: '1px solid rgba(255,255,255,0.2)', background: 'transparent', color: '#FFF', fontSize: '1rem' }} />
-            <input type="email" placeholder="E-mail" style={{ padding: '1.5rem', borderRadius: '30px', border: '1px solid rgba(255,255,255,0.2)', background: 'transparent', color: '#FFF', fontSize: '1rem' }} />
-            <button type="submit" style={{ padding: '1.5rem', borderRadius: '30px', background: '#FFF', color: '#000', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', marginTop: '1rem' }}>
-              GET IN TOUCH
-            </button>
+      {/* 8. Contact Form Footer (Blueprint) */}
+      <section style={{ padding: '10rem 2vw 6rem', borderTop: '1px solid var(--accent-blue)', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+         <h2 className="heading-xl" style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', marginBottom: '4rem', color: 'var(--accent-blue)', letterSpacing: '-0.02em', textAlign: 'center', fontWeight: '500' }}>
+           STREAMLINE YOUR<br/>HARDWARE.
+         </h2>
+         <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%', maxWidth: '600px', margin: '0 auto' }}>
+            <input type="text" placeholder="NAME" style={{ padding: '1.5rem', borderRadius: '0', border: '1px solid var(--accent-blue)', background: '#fff', color: '#111', fontSize: '1rem', fontFamily: 'var(--font-pixel)', letterSpacing: '0.1em' }} />
+            <input type="email" placeholder="E-MAIL" style={{ padding: '1.5rem', borderRadius: '0', border: '1px solid var(--accent-blue)', background: '#fff', color: '#111', fontSize: '1rem', fontFamily: 'var(--font-pixel)', letterSpacing: '0.1em' }} />
+            <motion.button 
+              whileHover={{ backgroundColor: '#111', color: '#fff' }}
+              transition={{ duration: 0.2 }}
+              type="submit" 
+              style={{ padding: '1.5rem', borderRadius: '0', background: 'var(--accent-blue)', color: '#FFF', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', marginTop: '1rem', fontFamily: 'var(--font-pixel)', letterSpacing: '0.2em', border: 'none' }}
+            >
+              GET IN TOUCH →
+            </motion.button>
          </form>
       </section>
 

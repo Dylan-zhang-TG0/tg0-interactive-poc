@@ -27,27 +27,27 @@ export default function TechExplosion() {
   // They fade in sequentially as the device opens up
   const callouts = [
     {
-      text: "Retain the customer's chosen <b>surface material</b>, while adapting seamlessly to any 3D geometry or level of flexibility.",
+      text: "[ 01 ] Retain the customer's chosen <b>surface material</b>, while adapting seamlessly to any 3D geometry or level of flexibility.",
       opacity: useTransform(scrollYProgress, [0.1, 0.3], [0, 1]),
       x: useTransform(scrollYProgress, [0.1, 0.3], [20, 0])
     },
     {
-      text: "<b>Customized textures</b> are engineered to generate touch signals that are uniquely interpretable by TG0 algorithms.",
+      text: "[ 02 ] <b>Customized textures</b> are engineered to generate touch signals that are uniquely interpretable by TG0 algorithms.",
       opacity: useTransform(scrollYProgress, [0.2, 0.4], [0, 1]),
       x: useTransform(scrollYProgress, [0.2, 0.4], [20, 0])
     },
     {
-      text: "Specially engineered <b>internal structures</b> detect and amplify deformation.",
+      text: "[ 03 ] Specially engineered <b>internal structures</b> detect and amplify deformation.",
       opacity: useTransform(scrollYProgress, [0.3, 0.5], [0, 1]),
       x: useTransform(scrollYProgress, [0.3, 0.5], [20, 0])
     },
     {
-      text: "Simple and robust <b>electrical connections</b> between the conductive material and the PCB.",
+      text: "[ 04 ] Simple and robust <b>electrical connections</b> between the conductive material and the PCB.",
       opacity: useTransform(scrollYProgress, [0.4, 0.6], [0, 1]),
       x: useTransform(scrollYProgress, [0.4, 0.6], [20, 0])
     },
     {
-      text: "Compatible with existing casings or protective <b>layers</b>.",
+      text: "[ 05 ] Compatible with existing casings or protective <b>layers</b>.",
       opacity: useTransform(scrollYProgress, [0.5, 0.7], [0, 1]),
       x: useTransform(scrollYProgress, [0.5, 0.7], [20, 0])
     }
@@ -59,25 +59,25 @@ export default function TechExplosion() {
 
   return (
     // The outer container sets the scroll duration. 250vh = 1.5 extra screens of scrolling.
-    <section ref={containerRef} style={{ height: '250vh', background: '#F0F0F0', color: '#333' }}>
+    <section ref={containerRef} style={{ height: '250vh', position: 'relative' }}>
       
       {/* The sticky container pins strictly to the viewport while we scroll down through the 250vh */}
-      <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: '2rem' }}>
+      <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: '2rem 4vw' }}>
         
         {/* Title */}
         <motion.div 
-          style={{ opacity: titleOpacity, y: titleY, textAlign: 'center', marginBottom: '4rem', zIndex: 10 }}
+          style={{ opacity: titleOpacity, y: titleY, textAlign: 'center', marginBottom: '2rem', zIndex: 10 }}
         >
           <h3 style={{ 
-            fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', 
-            fontWeight: '300', 
-            lineHeight: '1.4', 
-            letterSpacing: '0.05em',
-            maxWidth: '1000px',
+            fontSize: 'clamp(3rem, 6vw, 5rem)', 
+            fontWeight: '500', 
+            lineHeight: '0.9', 
+            letterSpacing: '-0.02em',
+            maxWidth: '1200px',
             margin: '0 auto',
             color: '#111'
           }}>
-            OUR PLATFORM REPLACES COMPLEX SENSOR NETWORKS WITH AN <strong style={{fontWeight: 800}}>OVER-MOULDED MATERIAL STACK</strong> TO ACHIEVE TRUE SIMPLICITY, BEAUTY AND ELEGANCE.
+            REPLACES COMPLEX SENSOR NETWORKS WITH AN <strong style={{fontWeight: 800, color: 'var(--accent-blue)'}}>OVER-MOULDED MATERIAL STACK</strong> TO ACHIEVE TRUE SIMPLICITY.
           </h3>
         </motion.div>
 
@@ -114,7 +114,7 @@ export default function TechExplosion() {
           </div>
 
           {/* Right: Sequential Text Callouts */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {callouts.map((item, idx) => (
               <motion.div 
                 key={idx} 
@@ -122,20 +122,21 @@ export default function TechExplosion() {
                   opacity: item.opacity,
                   x: item.x,
                   background: '#FFFFFF', 
-                  padding: '1.2rem 1.5rem', 
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+                  padding: '1.5rem 2rem', 
+                  border: '1px solid var(--accent-blue)',
+                  boxShadow: '8px 8px 0 rgba(27,78,220,0.1)',
                   position: 'relative',
-                  borderLeft: '4px solid var(--accent-blue)',
                   display: 'flex',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  rotate: idx % 2 === 0 ? '-1deg' : '1deg' // Alternating tilt
                 }}
               >
                 {/* Visual marker pointing to the left */}
-                <div style={{ position: 'absolute', left: '-24px', width: '20px', height: '2px', background: 'rgba(0,0,0,0.1)' }} />
-                <div style={{ position: 'absolute', left: '-28px', width: '6px', height: '6px', borderRadius: '50%', background: '#ccc' }} />
+                <div style={{ position: 'absolute', left: '-40px', width: '40px', height: '1px', background: 'var(--accent-blue)' }} />
+                <div style={{ position: 'absolute', left: '-44px', width: '8px', height: '8px', background: 'transparent', border: '1px solid var(--accent-blue)' }} />
 
                 <p 
-                  style={{ margin: 0, fontSize: '0.95rem', lineHeight: '1.6', color: '#555' }}
+                  style={{ margin: 0, fontSize: '1rem', lineHeight: '1.6', color: '#111', fontFamily: 'var(--font-main)' }}
                   dangerouslySetInnerHTML={{ __html: item.text }} 
                 />
               </motion.div>
