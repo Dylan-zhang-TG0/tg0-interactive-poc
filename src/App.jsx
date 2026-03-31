@@ -7,7 +7,7 @@ import ShearSlider from './components/ShearSlider';
 import Marquee from './components/Marquee';
 import InteractiveSliderMockup from './components/InteractiveSliderMockup';
 import TechExplosion from './components/TechExplosion';
-import MaterialDial from './components/MaterialDial';
+import CMFKnobSnap from './components/CMFKnobSnap';
 
 const PixelText = ({ text, style, lightMode = false }) => {
   return (
@@ -203,8 +203,8 @@ export default function App() {
          <InteractiveSliderMockup />
       </section>
 
-      {/* 8. Material Selection Dial */}
-      <MaterialDial />
+      {/* 8. CMF Dial 3D Snap */}
+      <CMFKnobSnap />
 
       {/* 9. Contact Form Footer (Dark) */}
       <section className="section-dark" style={{ padding: '10rem 2rem 6rem', textAlign: 'center' }}>
