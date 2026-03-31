@@ -5,29 +5,12 @@ const BASE = import.meta.env.BASE_URL;
 export default function CMFKnobSnap() {
   const containerRef = useRef(null);
   const dialRef = useRef(null);
-  const ticksRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [currentRotation, setCurrentRotation] = useState(0);
   const [lastRotation, setLastRotation] = useState(0);
   const [position, setPosition] = useState(1);
   const startAngleRef = useRef(0);
 
-  // Generate tick marks on mount
-  useEffect(() => {
-    if (!ticksRef.current) return;
-    const tickCount = 40;
-    for (let i = 0; i < tickCount; i++) {
-      const tick = document.createElement('div');
-      tick.style.position = 'absolute';
-      tick.style.width = '1px';
-      tick.style.height = '12px';
-      tick.style.background = 'white';
-      tick.style.left = '50%';
-      tick.style.transformOrigin = '50% 127.5px';
-      tick.style.transform = `translateX(-50%) rotate(${i * (360 / tickCount)}deg)`;
-      ticksRef.current.appendChild(tick);
-    }
-  }, []);
 
   const getAngle = (x, y) => {
     if (!dialRef.current) return 0;
@@ -203,17 +186,6 @@ export default function CMFKnobSnap() {
                 />
               );
             })}
-            {/* Tick Marks */}
-            <div
-              ref={ticksRef}
-              style={{
-                position: 'absolute',
-                width: '85%',
-                height: '85%',
-                top: '7.5%',
-                left: '7.5%',
-              }}
-            />
           </div>
         </div>
       </div>
